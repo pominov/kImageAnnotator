@@ -100,13 +100,11 @@ void CoreView::removeTab(int index)
 
 void CoreView::showAnnotator()
 {
-	mAnnotationWidget->setUndoEnabled(true);
 	setCurrentWidget(mAnnotationWidget);
 }
 
 void CoreView::showCropper()
 {
-	mAnnotationWidget->setUndoEnabled(false);
 	mAnnotationWidget->clearSelection();
 	setCurrentWidget(mCropWidget);
 	mCropWidget->activate(mAnnotationWidget->annotationArea());
@@ -114,7 +112,6 @@ void CoreView::showCropper()
 
 void CoreView::showScaler()
 {
-	mAnnotationWidget->setUndoEnabled(false);
 	mAnnotationWidget->clearSelection();
 	setCurrentWidget(mScaleWidget);
 	mScaleWidget->activate(mAnnotationWidget->annotationArea());
@@ -122,7 +119,6 @@ void CoreView::showScaler()
 
 void CoreView::showRotator()
 {
-	mAnnotationWidget->setUndoEnabled(false);
 	mAnnotationWidget->clearSelection();
 	setCurrentWidget(mRotateWidget);
 	mRotateWidget->activate(mAnnotationWidget->annotationArea());
@@ -130,7 +126,6 @@ void CoreView::showRotator()
 
 void CoreView::showCutter()
 {
-	mAnnotationWidget->setUndoEnabled(false);
 	mAnnotationWidget->clearSelection();
 	setCurrentWidget(mCutWidget);
 	mCutWidget->activate(mAnnotationWidget->annotationArea());
@@ -138,7 +133,6 @@ void CoreView::showCutter()
 
 void CoreView::showCanvasModifier()
 {
-	mAnnotationWidget->setUndoEnabled(false);
 	mAnnotationWidget->clearSelection();
 	setCurrentWidget(mModifyCanvasWidget);
 	mModifyCanvasWidget->activate(mAnnotationWidget->annotationArea());

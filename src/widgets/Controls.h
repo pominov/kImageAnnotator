@@ -36,6 +36,9 @@ Q_OBJECT
 public:
 	explicit Controls(QWidget *parent);
 	~Controls() override = default;
+    
+    void setUndoEnabled(bool canUndo);
+    void setRedoEnabled(bool canRedo);
 
 Q_SIGNALS:
 	void undo() const;
@@ -48,6 +51,8 @@ Q_SIGNALS:
 
 private:
 	QHBoxLayout *mLayout;
+    QAction *mUndoAction;
+    QAction *mRedoAction;
 
 	void initGui();
 	QAction *createAction(const QString &tooltip, const QIcon &icon);

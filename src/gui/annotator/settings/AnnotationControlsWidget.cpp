@@ -51,4 +51,14 @@ QString AnnotationControlsWidget::name() const
 	return tr("Controls");
 }
 
+void AnnotationControlsWidget::setUndoEnabled(bool canUndo)
+{
+    mControls->setUndoEnabled(canUndo);
+}
+
+void AnnotationControlsWidget::setRedoEnabled(bool canRedo)
+{
+    mControls->setRedoEnabled(canRedo);
+}
+
 } // namespace kImageAnnotator

@@ -86,12 +86,16 @@ public:
 	void modifyCanvas(const QRectF &canvasRect, const QColor &color);
 	QRectF backgroundImageRect() const;
 	void cut(const QRectF &rect);
+    bool canUndo() const;
+    bool canRedo() const;
 
 public slots:
     virtual void update();
 
 signals:
     void imageChanged() const;
+    void canUndoChanged(bool canUndo);
+    void canRedoChanged(bool canRedo);
 
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent* event) override;

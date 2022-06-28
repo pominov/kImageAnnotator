@@ -62,6 +62,9 @@ AnnotationArea::AnnotationArea(
 
 	connect(&mKeyListener, &KeyEventListener::keyPressed, mKeyHelper, &KeyHelper::keyPress);
 	connect(&mKeyListener, &KeyEventListener::keyReleased, mKeyHelper, &KeyHelper::keyRelease);
+
+    connect(mUndoStack, &UndoStack::canUndoChanged, this, &AnnotationArea::canUndoChanged);
+    connect(mUndoStack, &UndoStack::canRedoChanged, this, &AnnotationArea::canRedoChanged);
 }
 
 AnnotationArea::~AnnotationArea()
@@ -269,6 +272,16 @@ void AnnotationArea::cut(const QRectF &rect)
 	mUndoStack->push(new CutCommand(mBackgroundImage.data(), scaledRect, this));
 
 	emit imageChanged();
+}
+
+bool AnnotationArea::canUndo() const
+{
+    return mUndoStack->canUndo();
+}
+
+bool AnnotationArea::canRedo() const
+{
+    return mUndoStack->canRedo();
 }
 
 void AnnotationArea::update()

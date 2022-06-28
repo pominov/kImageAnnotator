@@ -29,7 +29,8 @@ AnnotationTabWidget::AnnotationTabWidget(Config *config, AbstractSettingsProvide
 	mUndoAction(new QAction(this)),
 	mTabContextMenu(new AnnotationTabContextMenu(this)),
 	mTabCloser(new AnnotationTabCloser(this)),
-	mTabClickFilter(new AnnotationTabClickEventFilter(mTabBar, this))
+	mTabClickFilter(new AnnotationTabClickEventFilter(mTabBar, this)),
+    mCanUndoRedoCompressor(new QTimer(this))
 {
 	setTabBarAutoHide(true);
 	setMovable(true);
@@ -49,12 +50,19 @@ AnnotationTabWidget::AnnotationTabWidget(Config *config, AbstractSettingsProvide
 	connect(mTabContextMenu, &AnnotationTabContextMenu::closeAllTabsToRight, mTabCloser, &AnnotationTabCloser::closeAllTabsToRightTriggered);
 
 	connect(mTabClickFilter, &AnnotationTabClickEventFilter::closeTabTriggered, mTabCloser, &AnnotationTabCloser::closeTabTriggered);
+    
+    mCanUndoRedoCompressor->setInterval(100);
+    mCanUndoRedoCompressor->setSingleShot(true);
+    connect(mCanUndoRedoCompressor, &QTimer::timeout, this, &AnnotationTabWidget::updateUndoRedoEnabled);
 }
 
 int AnnotationTabWidget::addTab(const QPixmap &image, const QString &title, const QString &toolTip)
 {
 	auto content = new AnnotationTabContent(image, mConfig, mSettingsProvider);
-	connect(content->annotationArea(), &AnnotationArea::imageChanged, this, &AnnotationTabWidget::imageChanged);
+    auto annotationArea = content->annotationArea();
+	connect(annotationArea, &AnnotationArea::imageChanged, this, &AnnotationTabWidget::imageChanged);
+    connect(annotationArea, &AnnotationArea::canUndoChanged, mCanUndoRedoCompressor, static_cast<void (QTimer::*)()>(&QTimer::start));
+    connect(annotationArea, &AnnotationArea::canRedoChanged, mCanUndoRedoCompressor, static_cast<void (QTimer::*)()>(&QTimer::start));
 
 	return QTabWidget::addTab(content, title);
 }
@@ -88,12 +96,6 @@ void AnnotationTabWidget::updateTabInfo(int index, const QString &title, const Q
 {
 	setTabText(index, title);
 	setTabToolTip(index, toolTip);
-}
-
-void AnnotationTabWidget::setUndoRedoEnabled(bool enabled)
-{
-	mUndoAction->setEnabled(enabled);
-	mRedoAction->setEnabled(enabled);
 }
 
 void AnnotationTabWidget::tabInserted(int index)
@@ -141,6 +143,22 @@ void AnnotationTabWidget::tabChanged()
 {
 	mSettingsProvider->setActiveListener(currentAnnotationArea());
 	mSettingsProvider->setActiveZoomValueProvider(currentZoomValueProvider());
+    updateUndoRedoEnabled();
+}
+
+void AnnotationTabWidget::updateUndoRedoEnabled()
+{
+    auto curAnnotationArea = currentAnnotationArea();
+    const bool undoEnabled = curAnnotationArea && curAnnotationArea->canUndo();
+    if (mUndoAction->isEnabled() != undoEnabled) {
+        mUndoAction->setEnabled(undoEnabled);
+        emit canUndoChanged(undoEnabled);
+    }
+    const bool redoEnabled = curAnnotationArea && curAnnotationArea->canRedo();
+    if (mRedoAction->isEnabled() != redoEnabled) {
+        mRedoAction->setEnabled(redoEnabled);
+        emit canRedoChanged(redoEnabled);
+    }
 }
 
 void AnnotationTabWidget::addContextMenuActions(const QList<QAction *> &actions)

@@ -76,6 +76,11 @@ void AnnotationWidget::initGui()
 	connect(mControlsWidget, &AnnotationControlsWidget::showRotate, this, &AnnotationWidget::activateRotate);
 	connect(mControlsWidget, &AnnotationControlsWidget::showModifyCanvas, this, &AnnotationWidget::activateModifyCanvas);
 	connect(mControlsWidget, &AnnotationControlsWidget::showCut, this, &AnnotationWidget::activateCut);
+    
+    mControlsWidget->setUndoEnabled(mAnnotationTabWidget->undoAction()->isEnabled());
+    connect(mAnnotationTabWidget, &AnnotationTabWidget::canUndoChanged, mControlsWidget, &AnnotationControlsWidget::setUndoEnabled);
+    mControlsWidget->setRedoEnabled(mAnnotationTabWidget->redoAction()->isEnabled());
+    connect(mAnnotationTabWidget, &AnnotationTabWidget::canRedoChanged, mControlsWidget, &AnnotationControlsWidget::setRedoEnabled);
 
 	connect(qApp, &QCoreApplication::aboutToQuit, this, &AnnotationWidget::persistDockWidgets);
 }
@@ -131,11 +136,6 @@ void AnnotationWidget::insertImageItem(const QPointF &position, const QPixmap &p
 void AnnotationWidget::removeTab(int index)
 {
 	mAnnotationTabWidget->removeTab(index);
-}
-
-void AnnotationWidget::setUndoEnabled(bool enabled)
-{
-	mAnnotationTabWidget->setUndoRedoEnabled(enabled);
 }
 
 QAction *AnnotationWidget::undoAction() const

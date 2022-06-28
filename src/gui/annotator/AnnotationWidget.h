@@ -47,7 +47,6 @@ public:
 	void updateTabInfo(int index, const QString &title, const QString &toolTip);
 	void insertImageItem(const QPointF &position, const QPixmap &pixmap) const;
 	void removeTab(int index);
-	void setUndoEnabled(bool enabled);
 	QAction* undoAction() const;
 	QAction* redoAction() const;
 	void clearSelection() const;

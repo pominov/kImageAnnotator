@@ -42,6 +42,10 @@ Q_SIGNALS:
 	void showRotate() const;
 	void showModifyCanvas() const;
 	void showCut() const;
+    
+public Q_SLOTS:
+    void setUndoEnabled(bool canUndo);
+    void setRedoEnabled(bool canRedo);
 
 private:
 	QBoxLayout *mMainLayout;

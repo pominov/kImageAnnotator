@@ -43,13 +43,14 @@ public:
 	QAction* undoAction() const;
 	QAction* redoAction() const;
 	void updateTabInfo(int index, const QString &title, const QString &toolTip);
-	void setUndoRedoEnabled(bool enabled);
     void addContextMenuActions(const QList<QAction*> & actions);
 
 signals:
 	void imageChanged() const;
 	void tabMoved(int fromIndex, int toIndex) const;
 	void tabContextMenuOpened(int index) const;
+    void canUndoChanged(bool canUndo);
+    void canRedoChanged(bool canRedo);
 
 public slots:
 	void undoTriggered() const;
@@ -68,11 +69,13 @@ private:
 	AnnotationTabContextMenu *mTabContextMenu;
 	AnnotationTabCloser *mTabCloser;
 	AnnotationTabClickEventFilter *mTabClickFilter;
+    QTimer *mCanUndoRedoCompressor;
 
 private slots:
 	void updateCurrentWidget(int index);
 	void showTabContextMenu(const QPoint &pos);
 	void tabChanged();
+    void updateUndoRedoEnabled();
 };
 
 } // namespace kImageAnnotator

@@ -23,20 +23,32 @@ namespace kImageAnnotator {
 
 Controls::Controls(QWidget *parent) :
 	QWidget(parent),
-	mLayout(new QHBoxLayout(this))
+	mLayout(new QHBoxLayout(this)),
+    mUndoAction(nullptr),
+    mRedoAction(nullptr)
 {
 	initGui();
 	setFocusPolicy(Qt::ClickFocus);
 }
 
+void Controls::setUndoEnabled(bool canUndo)
+{
+    mUndoAction->setEnabled(canUndo);
+}
+
+void Controls::setRedoEnabled(bool canRedo)
+{
+    mRedoAction->setEnabled(canRedo);
+}
+
 void Controls::initGui()
 {
-	auto undoAction = createAction(tr("Undo"), IconLoader::load(QLatin1String("undo.svg")));
-	undoAction->setShortcut(Qt::Key_Undo);
-	createButton(undoAction);
-	auto redoAction = createAction(tr("Redo"), IconLoader::load(QLatin1String("redo.svg")));
-	redoAction->setShortcut(Qt::Key_Redo);
-	createButton(redoAction);
+	mUndoAction = createAction(tr("Undo"), IconLoader::load(QLatin1String("undo.svg")));
+	mUndoAction->setShortcut(Qt::Key_Undo);
+	createButton(mUndoAction);
+	mRedoAction = createAction(tr("Redo"), IconLoader::load(QLatin1String("redo.svg")));
+	mRedoAction->setShortcut(Qt::Key_Redo);
+	createButton(mRedoAction);
 
 	auto cropAction = createAction(tr("Crop"), IconLoader::load(QLatin1String("crop.svg")));
 	createButton(cropAction);
@@ -49,8 +61,8 @@ void Controls::initGui()
 	auto cutAction = createAction(tr("Cut"), IconLoader::load(QLatin1String("cut.svg")));
 	createButton(cutAction);
 
-	connect(undoAction, &QAction::triggered, this, &Controls::undo);
-	connect(redoAction, &QAction::triggered, this, &Controls::redo);
+	connect(mUndoAction, &QAction::triggered, this, &Controls::undo);
+	connect(mRedoAction, &QAction::triggered, this, &Controls::redo);
 	connect(cropAction, &QAction::triggered, this, &Controls::crop);
 	connect(scaleAction, &QAction::triggered, this, &Controls::scale);
     connect(rotateAction, &QAction::triggered, this, &Controls::rotate);
