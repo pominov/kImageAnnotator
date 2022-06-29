@@ -36,6 +36,15 @@ AnnotationTabWidget::AnnotationTabWidget(Config *config, AbstractSettingsProvide
 	setMovable(true);
 	setTabsClosable(true);
 	mTabBar->setContextMenuPolicy(Qt::CustomContextMenu);
+    
+    mUndoAction->setText(tr("Undo"));
+    mUndoAction->setToolTip(mUndoAction->text());
+    mUndoAction->setIcon(QIcon::fromTheme(QStringLiteral("edit-undo")));
+    mUndoAction->setShortcut(Qt::Key_Undo);
+    mRedoAction->setText(tr("Redo"));
+    mRedoAction->setToolTip(mRedoAction->text());
+    mRedoAction->setIcon(QIcon::fromTheme(QStringLiteral("edit-redo")));
+    mRedoAction->setShortcut(Qt::Key_Redo);
 
 	connect(mUndoAction, &QAction::triggered, this, &AnnotationTabWidget::undoTriggered);
 	connect(mRedoAction, &QAction::triggered, this, &AnnotationTabWidget::redoTriggered);
